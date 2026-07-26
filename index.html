@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juul_NOTES</title>
+  <!-- Favicon et Icônes de l'application -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon192.png">
+  <link rel="shortcut icon" type="image/png" href="./icons/icon192.png">
+  <link rel="apple-touch-icon" href="./icons/icon192.png">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <script type="module" crossorigin src="./assets/index-BPHS6Gkv.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CQCVMtKK.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- En-tête principal -->
+    <div class="app-header">
+      <h1 class="app-header-title">Juul_<span>NOTES</span></h1>
+      <div id="user-badge" class="user-badge" title="État de connexion utilisateur">Mode Local</div>
+    </div>
+
+    <!-- Alertes et alertes de sauvegarde -->
+    <div id="alert-container"></div>
+
+    <!-- Barre de recherche et actions d'en-tête -->
+    <div class="search-bar-container">
+      <div class="search-input-wrapper">
+        <input type="text" id="input-search" placeholder="Rechercher une note ou liste..." autocomplete="off">
+        <button id="btn-clear-search" class="btn-clear-search hidden" title="Effacer la recherche"></button>
+      </div>
+      <button id="btn-filter-focus" class="btn-action-header" title="Mode Focus Journalier"></button>
+      <button id="btn-toggle-all" class="btn-action-header" title="Tout replier / déplier"></button>
+      <button id="btn-open-add-list-modal" class="btn-action-header" title="Créer une nouvelle liste"></button>
+      <button id="btn-toggle-panel" class="btn-action-header" title="Configuration & Paramètres"></button>
+    </div>
+
+    <!-- Panneau de Contrôle et Configuration Supabase -->
+    <div id="control-panel" class="control-panel-box hidden">
+
+      <div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <button id="btn-theme" class="btn-panel-action">Auto</button>
+        <button id="btn-import" class="btn-panel-action">Importer</button>
+        <button id="btn-export" class="btn-panel-action">Exporter</button>
+        <input type="file" id="import-file-input" class="hidden" accept=".json">
+      </div>
+
+      <!-- Section Mode d'emploi Grand Public -->
+      <div class="user-guide-box">
+        <label id="label-user-guide-title" class="user-guide-title">
+          <span id="user-guide-icon"></span> Mode d'emploi
+        </label>
+        <div class="user-guide-content">
+          <div class="guide-item">
+            <strong>📝 Ajout rapide :</strong> Rédigez votre note puis appuyez sur <strong>+</strong> ou utilisez les touches <code>Ctrl + Entrée</code> pour valider immédiatement.
+          </div>
+          <div class="guide-item">
+            <strong>🔴 Marquer comme urgent ( ! ) :</strong> Commencez le texte d'une note par un point d'exclamation <code>!</code> pour l'afficher en rouge et la placer en priorité en haut de la liste.
+          </div>
+          <div class="guide-item">
+            <strong>🟡 Marquer une hésitation ( ? ) :</strong> Commencez votre note par un point d'interrogation <code>?</code> pour la mettre en valeur en jaune (idées à vérifier, questions).
+          </div>
+          <div class="guide-item">
+            <strong>🎯 Mode Focus Journalier :</strong> Cliquez sur l'icône de cible à côté d'une note pour la réserver à votre journée. Activez le bouton Cible 🎯 en haut de l'écran pour vous concentrer uniquement sur vos tâches du jour.
+          </div>
+          <div class="guide-item">
+            <strong>🖐️ Organisation facile (Glisser-Déposer) :</strong> Faites glisser les listes et les notes avec votre souris ou votre doigt pour les réorganiser ou passer une note d'une liste à une autre.
+          </div>
+          <div class="guide-item">
+            <strong>✏️ Modification & Corbeille :</strong> Double-cliquez sur une note ou un titre de liste pour modifier son texte. Si vous supprimez une note par erreur, retrouvez-la et restaurez-la dans l'historique de la corbeille en bas d'écran.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section de Clés et Configuration Locale -->
+      <div class="cloud-config-box">
+        <label id="label-cloud-config-title">Synchronisation en ligne (Stockage local uniquement)</label>
+        <small class="cloud-label-small">Vos identifiants de serveur restent strictement stockés dans le navigateur de cet appareil.</small>
+        
+        <div style="margin-top: 8px;">
+          <label for="input-supabase-url" class="cloud-label-small">Adresse du serveur :</label>
+          <input type="text" id="input-supabase-url" placeholder="https://votre-serveur.com" autocomplete="off">
+          
+          <label for="input-supabase-key" class="cloud-label-small">Clé d'accès :</label>
+          <div class="password-field-wrapper">
+            <input type="password" id="input-supabase-key" placeholder="Clé d'accès" autocomplete="off">
+            <button type="button" class="btn-toggle-password" title="Afficher la clé en clair"></button>
+          </div>
+
+          <button id="btn-save-supabase-config" type="button" class="btn-primary" style="width: 100%; margin-top: 4px;">Enregistrer la configuration de synchronisation</button>
+
+          <!-- Réglage du Délai de Synchronisation (Debounce) -->
+          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);">
+            <label for="select-sync-debounce" class="cloud-label-small" style="display: block; font-weight: 600;">
+              ⏱️ Délai de synchronisation (Debounce) :
+            </label>
+            <select id="select-sync-debounce" class="form-control" style="width: 100%; margin-top: 4px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 0.85rem;">
+              <option value="0.5">0,5 seconde (Ultra-rapide)</option>
+              <option value="0.8">0,8 seconde (Recommandé - Défaut)</option>
+              <option value="1">1,0 seconde</option>
+              <option value="1.5">1,5 seconde</option>
+              <option value="2">2,0 secondes</option>
+              <option value="3">3,0 secondes</option>
+              <option value="4">4,0 secondes</option>
+              <option value="5">5,0 secondes (Réseau lent / Économe)</option>
+              <option value="7">7,0 secondes</option>
+              <option value="10">10,0 secondes (Ultra-économe)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Maintenance du Cache & Cache-Busting -->
+      <div class="cache-config-box">
+        <label id="label-cache-config-title" class="cloud-label-small" style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.85rem; color: var(--text); margin-bottom: 4px;">
+          <span id="cache-config-icon"></span> Maintenance du Cache (Cache-Busting)
+        </label>
+        <small class="cloud-label-small" style="display: block; margin-bottom: 8px;">
+          Force le vider du cache du navigateur et du Service Worker pour recharger les fichiers de l'application à neuf, sans toucher à vos notes enregistrées.
+        </small>
+        <button id="btn-force-cache-bust" type="button" class="btn-panel-action" style="width: 100%;">
+          <span id="btn-cache-bust-icon"></span> Forcer le rafraîchissement du cache
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteneurs dynamiques des listes et de la corbeille -->
+    <div id="lists-container"></div>
+    <div id="trash-container"></div>
+
+    <!-- Pied de page -->
+    <footer class="app-footer">
+      <div id="backup-timestamps"></div>
+      <div id="storage-info"></div>
+      <div class="app-version">Juul_NOTES v10.0.1</div>
+    </footer>
+
+  </div>
+
+  <!-- Bulle flottante d'état de la synchronisation -->
+  <div class="cloud-floating-bubble" title="État de la synchronisation">
+    <div id="cloud-status" class="cloud-status-indicator">Synchronisation non configurée</div>
+    <span id="cloud-status-sync-icon" style="font-size: 14px;"></span>
+  </div>
+
+  <!-- Fenêtre Modale de Création de Liste -->
+  <div id="add-list-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text);">Nouvelle liste</h2>
+        <button id="btn-close-add-list-modal" class="btn-icon" title="Fermer"></button>
+      </div>
+      <form id="form-add-list" style="margin-top: 16px; display: flex; gap: 8px; width: 100%; box-sizing: border-box;">
+        <input type="text" id="input-list-name" placeholder="Nom de la nouvelle liste..." required autocomplete="off" style="flex: 1 1 0%; min-width: 0; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: 0.9rem;">
+        <button type="submit" class="btn-primary" style="white-space: nowrap; padding: 8px 16px; border-radius: 6px; font-weight: 600; flex-shrink: 0;">Créer Liste</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fenêtre Modale d'Authentification et Gestion de Compte Utilisateur -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Gestion du compte</h2>
+        <button id="btn-close-auth-modal" class="btn-icon" title="Fermer"></button>
+      </div>
+
+      <!-- Section Utilisateur Connecté -->
+      <div id="account-section-connected" class="hidden">
+        <p style="font-size: 0.9rem; margin-bottom: 16px;">
+          Connecté en tant que : <strong id="user-connected-email" style="color: var(--primary);"></strong>
+        </p>
+
+        <!-- Formulaire de Changement de Mot de Passe -->
+        <form id="form-account-settings" style="margin-bottom: 20px;">
+          <h3 style="font-size: 0.95rem; margin-bottom: 8px;">Modifier mon mot de passe</h3>
+          <div class="form-field">
+            <label for="change-password-input">Nouveau mot de passe :</label>
+            <div class="password-field-wrapper">
+              <input type="password" id="change-password-input" placeholder="Nouveau mot de passe" required minlength="6">
+              <button type="button" class="btn-toggle-password" title="Afficher en clair"></button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">Mettre à jour le mot de passe</button>
+        </form>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+          <button id="btn-sign-out" class="btn-secondary" style="flex: 1;">Se déconnecter</button>
+          <button id="btn-delete-account" class="btn-danger" style="flex: 1;">Supprimer mon compte</button>
+        </div>
+      </div>
+
+      <!-- Section Inscription / Connexion / Mot de passe oublié -->
+      <div id="account-section-form">
+        <div class="auth-tabs">
+          <button id="auth-tab-login" class="auth-tab-btn active">Connexion</button>
+          <button id="auth-tab-signup" class="auth-tab-btn">Créer un compte</button>
+          <button id="auth-tab-reset" class="auth-tab-btn">Mot de passe oublié</button>
+        </div>
+
+        <!-- Formulaire de Connexion -->
+        <form id="form-login">
+          <div class="form-field">
+            <label for="login-email">Adresse Email :</label>
+            <input type="email" id="login-email" placeholder="votre@email.com" required autocomplete="email">
+          </div>
+          <div class="form-field">
+            <label for="login-password">Mot de passe :</label>
+            <div class="password-field-wrapper">
+              <input type="password" id="login-password" placeholder="Votre mot de passe" required autocomplete="current-password">
+              <button type="button" class="btn-toggle-password" title="Afficher en clair"></button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">Se connecter</button>
+        </form>
+
+        <!-- Formulaire d'Inscription -->
+        <form id="form-signup" class="hidden">
+          <div class="form-field">
+            <label for="signup-email">Adresse Email :</label>
+            <input type="email" id="signup-email" placeholder="votre@email.com" required autocomplete="email">
+          </div>
+          <div class="form-field">
+            <label for="signup-password">Créer un mot de passe :</label>
+            <div class="password-field-wrapper">
+              <input type="password" id="signup-password" placeholder="Mot de passe (min. 6 caractères)" required minlength="6" autocomplete="new-password">
+              <button type="button" class="btn-toggle-password" title="Afficher en clair"></button>
+            </div>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
+            ℹ️ Aucune validation par email n'est exigée. Vous serez immédiatement connecté après la création du compte.
+          </p>
+          <button type="submit" class="btn-primary" style="width: 100%;">Créer mon compte</button>
+        </form>
+
+        <!-- Formulaire de Mot de passe oublié -->
+        <form id="form-reset" class="hidden">
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+            Saisissez votre adresse email pour recevoir un lien de réinitialisation de votre mot de passe.
+          </p>
+          <div class="form-field">
+            <label for="reset-email">Adresse Email :</label>
+            <input type="email" id="reset-email" placeholder="votre@email.com" required>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">Envoyer le lien de réinitialisation</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
