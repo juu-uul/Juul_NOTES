@@ -1,19 +1,19 @@
 /**
  * Service Worker - Juul_NOTES
- * Version: 10.0.0
- * Gestion de la mise en cache hors-ligne : pré-mise en cache des briques JS (app, db, ui, sync, auth, modal, icons, supabase-client, sw-update, version, mobile-keyboard),
- * des dépendances (SortableJS inclus dans le bundling/fetch), des styles CSS et des assets PWA.
+ * Version: 10.0.2
+ * Gestion de la mise en cache hors-ligne : pré-mise en cache des briques JS,
+ * des dépendances, des styles CSS et des assets PWA.
  */
 "use strict";
 
-const CACHE_NAME = 'juul-notes-v10.0.0';
+const CACHE_NAME = 'juul-notes-v10.0.2';
 
 // Liste des ressources essentielles à pré-cacher lors de l'installation
 const ESSENTIAL_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/index-BPHS6Gkv.js',
+  './assets/index-if1UvDdY.js',
   './assets/index-CQCVMtKK.css',
   './icons/icon72.png',
   './icons/icon192.png',
@@ -23,7 +23,7 @@ const ESSENTIAL_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      console.log('SW : Mise en cache initiale des briques JS & ressources (v10.0.0)');
+      console.log('SW : Mise en cache initiale des briques JS & ressources (v10.0.2)');
       for (const asset of ESSENTIAL_ASSETS) {
         try {
           await cache.add(asset);
