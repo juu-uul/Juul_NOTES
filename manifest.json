@@ -3,7 +3,7 @@
   "name": "Juul_NOTES",
   "short_name": "Juul_NOTES",
   "description": "Gestionnaire de notes et listes ultra-compact Juul_NOTES avec mode hors ligne et synchronisation en ligne.",
-  "version": "11.2.0",
+  "version": "11.2.1",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
