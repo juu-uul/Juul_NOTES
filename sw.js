@@ -13,18 +13,8 @@ const ESSENTIAL_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './src/css/styles.css',
-  './src/js/app.js',
-  './src/js/db.js',
-  './src/js/ui.js',
-  './src/js/sync.js',
-  './src/js/auth.js',
-  './src/js/modal.js',
-  './src/js/icons.js',
-  './src/js/supabase-client.js',
-  './src/js/sw-update.js',
-  './src/js/version.js',
-  './src/js/mobile-keyboard.js',
+  './assets/index-Cstju1R0.js',
+  './assets/index-DXLdT7cd.css',
   './icons/icon72.png',
   './icons/icon192.png',
   './icons/icon512.png'
@@ -33,7 +23,7 @@ const ESSENTIAL_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      console.log('SW : Mise en cache initiale des briques JS & ressources (v10.0.0)');
+      console.log('SW : Mise en cache initiale des ressources (v11.2.0)');
       for (const asset of ESSENTIAL_ASSETS) {
         try {
           await cache.add(asset);
